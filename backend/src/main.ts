@@ -7,6 +7,12 @@ import { User, UserRole } from './users/entities/user.entity';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+    // Bật CORS cho frontend
+  app.enableCors({
+    origin: 'http://localhost:5173', // frontend React
+    credentials: true,
+  });
+
   const dataSource = app.get(DataSource);
   const userRepo = dataSource.getRepository(User);
 
