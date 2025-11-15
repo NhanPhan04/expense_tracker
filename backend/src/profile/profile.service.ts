@@ -14,7 +14,10 @@ export class ProfileService {
   async getProfile(userId: number) {
     const user = await this.userRepo.findOne({ where: { id: userId } });
     if (!user) throw new NotFoundException('User not found');
-    return user;
+    return {
+    ...user,
+      avatar: user.avatar ?? undefined,
+    };
   }
 
   async updateProfile(userId: number, dto: UpdateProfileDto) {

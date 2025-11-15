@@ -10,6 +10,8 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import RoleRedirect from "../components/RoleRedirect";
 import UserLayout from "../layouts/UserLayout";
 import AdminLayout from "../layouts/AdminLayout";
+import AdminProfile from "../pages/profile/AdminProfile";
+import UserProfile from "../pages/profile/UserProfile";
 
 const AppRoutes = () => {
   return (
@@ -34,11 +36,13 @@ const AppRoutes = () => {
           }
         >
           <Route path="/user" element={<UserDashboard />} />
-          {/* Thêm page user khác /transactions, /statistics,... */}
+          <Route path="/user/profile" element={<UserProfile />} />
+          {/* Thêm các page user khác /transactions, /statistics,... */}
         </Route>
 
         {/* Admin routes */}
         <Route
+          path="/admin"
           element={
             <ProtectedRoute allowedRoles={["admin"]}>
               <AdminLayout>
@@ -47,12 +51,13 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         >
-       <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/users" element={<Users />} /> {/* <-- thêm route này */}
-          {/* thêm các page admin khác /admin/statistics, /admin/settings */}
+          <Route index element={<AdminDashboard />} /> {/* /admin */}
+          <Route path="users" element={<Users />} />   {/* /admin/users */}
+          <Route path="profile" element={<AdminProfile />} /> {/* /admin/profile */}
+          {/* Thêm các page admin khác /admin/statistics, /admin/settings */}
         </Route>
 
-        {/* Fallback nếu route không tồn tại */}
+        {/* Catch-all */}
         <Route path="*" element={<RoleRedirect />} />
       </Routes>
     </Router>

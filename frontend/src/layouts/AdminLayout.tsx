@@ -19,6 +19,7 @@ const AdminLayout = ({ children }: Props) => {
           <Link to="/admin/users" className="hover:text-purple-600">Users</Link>
           <Link to="/admin/statistics" className="hover:text-purple-600">Statistics</Link>
           <Link to="/admin/settings" className="hover:text-purple-600">Settings</Link>
+         <Link to="/admin/profile" className="hover:text-purple-600">Profile</Link>
         </nav>
       </div>
 
