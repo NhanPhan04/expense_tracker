@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { User } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
+import { ProfileModule } from './profile/profile.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -18,8 +19,10 @@ import { UsersModule } from './users/users.module';
       synchronize: true, // Lúc phát triển bật true để tạo bảng tự động
     }),
     TypeOrmModule.forFeature([User]),
+    
     AuthModule,
     UsersModule,
+    ProfileModule,
   ],
 })
 export class AppModule {}
