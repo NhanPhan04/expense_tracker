@@ -18,12 +18,18 @@ const UserDashboard = () => {
     }
   }, []);
 
-  return (
-    <div>
-       <Navbar userName={userName} />
-      <div className="p-8">
-        <h1 className="text-2xl font-bold">Trang chủ User</h1>
-        {/* Các component dashboard khác */}
+   return (
+    <div className="w-full min-h-screen bg-gray-100">
+      {/* Nội dung trang */}
+      <div className="max-w-6xl p-8 mx-auto">
+        <h1 className="mb-4 text-3xl font-bold">Trang chủ User</h1>
+
+        {/* Dashboard content */}
+        <div className="p-6 bg-white shadow-md rounded-xl">
+          <p className="text-gray-700">
+            Chào mừng bạn trở lại, <span className="font-semibold">{userName}</span>!
+          </p>
+        </div>
       </div>
     </div>
   );

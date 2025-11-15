@@ -1,51 +1,105 @@
 // src/layouts/UserLayout.tsx
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import { Outlet, Link } from "react-router-dom";
 
-type Props = {
-  children?: ReactNode;
-};
+type Props = { children?: ReactNode };
+
+const DEFAULT_AVATAR =
+  "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
 
 const UserLayout = ({ children }: Props) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [user, setUser] = useState<{ name: string; avatar: string }>({
+    name: "User",
+    avatar: DEFAULT_AVATAR,
+  });
+
+  // Load user từ localStorage khi layout mount
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+    if (storedUser.name || storedUser.avatar) {
+      setUser({
+        name: storedUser.name || "User",
+        avatar: storedUser.avatar || DEFAULT_AVATAR,
+      });
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("user");
+    window.location.href = "/login";
+  };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="relative flex min-h-screen overflow-hidden bg-gray-100">
+      {/* Overlay mobile */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-20 bg-black bg-opacity-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <div className={`bg-white shadow-lg w-64 p-5 space-y-6 absolute md:relative md:translate-x-0 transform ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} transition-transform`}>
+      <div
+        className={`
+          fixed md:relative z-30 
+          bg-white shadow-lg w-64 p-5 space-y-6 
+          transform h-screen
+          transition-transform duration-300
+          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} 
+          md:translate-x-0
+        `}
+      >
         <h1 className="text-2xl font-bold text-purple-500">User Panel</h1>
         <nav className="flex flex-col gap-3 mt-10">
-          <Link to="/user" className="hover:text-purple-600">Dashboard</Link>
-          <Link to="/user/transactions" className="hover:text-purple-600">Transactions</Link>
-          <Link to="/user/statistics" className="hover:text-purple-600">Statistics</Link>
-          <Link to="/user/profile" className="hover:text-purple-600">Profile</Link>
+          <Link to="/user" className="hover:text-purple-600">
+            Dashboard
+          </Link>
+          <Link to="/user/transactions" className="hover:text-purple-600">
+            Transactions
+          </Link>
+          <Link to="/user/statistics" className="hover:text-purple-600">
+            Statistics
+          </Link>
+          <Link to="/user/profile" className="hover:text-purple-600">
+            Profile
+          </Link>
         </nav>
       </div>
 
       {/* Main content */}
-      <div className="flex flex-col flex-1">
+      <div className="flex flex-col flex-1 md:ml-0">
         {/* Topbar */}
         <div className="flex items-center justify-between p-4 bg-white shadow">
-          <button className="font-bold md:hidden" onClick={() => setSidebarOpen(!sidebarOpen)}>
+          <button
+            className="font-bold md:hidden"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+          >
             ☰
           </button>
-          <div className="font-semibold text-gray-700">Xin chào, User!</div>
+
+          <div className="flex items-center gap-3 font-semibold text-gray-700">
+            <img
+              src={user.avatar}
+              alt="Avatar"
+              className="object-cover w-8 h-8 rounded-full"
+            />
+            <span>Xin chào, {user.name}!</span>
+          </div>
+
           <button
             className="px-4 py-2 text-white bg-purple-500 rounded hover:bg-purple-600"
-            onClick={() => {
-              localStorage.removeItem("token");
-              localStorage.removeItem("role");
-              window.location.href = "/login";
-            }}
+            onClick={handleLogout}
           >
             Logout
           </button>
         </div>
 
         {/* Content */}
-        <div className="flex-1 p-5 overflow-auto">
-          {children}
-        </div>
+        <div className="flex-1 p-5 overflow-auto">{children || <Outlet />}</div>
       </div>
     </div>
   );

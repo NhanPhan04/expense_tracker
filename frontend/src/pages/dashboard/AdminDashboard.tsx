@@ -20,15 +20,11 @@ const AdminDashboard = () => {
     }
   }, []);
 
-  return (
-    <div>
-      <Navbar userName={userName} />
-      <div className="p-8">
-        <h1 className="text-2xl font-bold">Trang chủ Admin</h1>
-        {/* Các component dashboard khác */}
-      </div>
+ return (
+    <div className="bg-white shadow rounded p-6 min-h-[85vh]">
+      <h1 className="mb-4 text-2xl font-bold">Trang chủ Admin</h1>
+      <p>Chào mừng, <span className="font-semibold">{userName}</span>!</p>
     </div>
   );
 };
-
 export default AdminDashboard;
