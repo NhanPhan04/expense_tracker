@@ -29,7 +29,7 @@ const Register = () => {
   return (
     <div className="flex w-full min-h-screen">
       <div className="items-center justify-center flex-1 hidden md:flex bg-gradient-to-br from-purple-500 to-pink-500 rounded-l-3xl">
-        <h1 className="text-4xl font-bold text-white">Chào mừng!</h1>
+        <h1 className="text-4xl font-bold text-white">Tạo Tài Khoản!</h1>
       </div>
 
       <div className="flex items-center justify-center flex-1 bg-white shadow-2xl rounded-r-3xl">
