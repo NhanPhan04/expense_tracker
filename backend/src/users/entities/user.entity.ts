@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { IsEmail, Length, IsEnum } from 'class-validator';
 
 export enum UserRole {
@@ -39,4 +39,7 @@ otpExpire: Date | null;
 
   @CreateDateColumn()
   createdAt: Date;
+  
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

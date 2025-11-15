@@ -1,26 +1,38 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+// users/users.service.ts
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { User } from './entities/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  updateRole(arg0: number, role: string) {
+    throw new Error('Method not implemented.');
   }
+  constructor(@InjectRepository(User) private repo: Repository<User>) {}
 
   findAll() {
-    return `This action returns all users`;
+    return this.repo.find({ select: ['id', 'name', 'email', 'role', 'createdAt'] });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async update(id: number, dto: Partial<User>) {
+    const user = await this.repo.findOne({ where: { id } });
+    if (!user) throw new NotFoundException('User không tồn tại');
+    Object.assign(user, dto);
+    return this.repo.save(user);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async remove(id: number) {
+    const user = await this.repo.findOne({ where: { id } });
+    if (!user) throw new NotFoundException('User không tồn tại');
+    return this.repo.remove(user);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async resetPassword(id: number, newPassword: string) {
+    const user = await this.repo.findOne({ where: { id } });
+    if (!user) throw new NotFoundException('User không tồn tại');
+    user.password = await bcrypt.hash(newPassword, 10);
+    return this.repo.save(user);
   }
 }
