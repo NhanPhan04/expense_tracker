@@ -5,6 +5,8 @@ import { AuthModule } from './auth/auth.module';
 import { User } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
 import { ProfileModule } from './profile/profile.module';
+import { TransactionModule } from './transactions/transactions.module';
+import { CategoryModule } from './categories/categories.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -23,6 +25,8 @@ import { ProfileModule } from './profile/profile.module';
     AuthModule,
     UsersModule,
     ProfileModule,
+    TransactionModule,
+    CategoryModule,
   ],
 })
 export class AppModule {}
