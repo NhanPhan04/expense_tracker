@@ -3,9 +3,13 @@ import { AppModule } from './app.module';
 import { DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User, UserRole } from './users/entities/user.entity';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+ const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  // serve uploads folder
+  app.useStaticAssets(join(__dirname, '..', 'uploads'), { prefix: '/uploads/' });
 
     // Bật CORS cho frontend
   app.enableCors({

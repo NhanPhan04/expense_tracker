@@ -31,8 +31,9 @@ export class User {
   @IsEnum(UserRole)
   role: UserRole;
 
-  @Column({ nullable: true })
-  avatar: string; // URL hoặc tên file ảnh
+  @Column({ nullable: true })   // <-- sửa ở đây
+  avatar?: string;  
+ // URL hoặc tên file ảnh
 
  @Column({ nullable: true, type: 'varchar' })
   otp: string | null;
