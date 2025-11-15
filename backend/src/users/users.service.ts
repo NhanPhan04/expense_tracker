@@ -1,12 +1,23 @@
 // users/users.service.ts
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-
+import { CreateUserDto } from './dto/create-user.dto';
 @Injectable()
 export class UsersService {
+   async create(dto: CreateUserDto) {
+    const existing = await this.repo.findOne({ where: { email: dto.email } });
+    if (existing) throw new BadRequestException('Email đã tồn tại');
+
+    const user = this.repo.create({
+      ...dto,
+      password: await bcrypt.hash(dto.password, 10),
+    });
+
+    return this.repo.save(user);
+  }
   updateRole(arg0: number, role: string) {
     throw new Error('Method not implemented.');
   }

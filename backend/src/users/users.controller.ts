@@ -1,7 +1,8 @@
 // users/users.controller.ts
-import { Controller, Get, Patch, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Patch, Delete, Param, Body, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller('admin/users')
 export class UsersController {
@@ -11,7 +12,10 @@ export class UsersController {
   findAll() {
     return this.usersService.findAll();
   }
-
+  @Post()
+  create(@Body() dto: CreateUserDto) {
+    return this.usersService.create(dto);
+  }
   @Patch(':id')
   update(@Param('id') id: number, @Body() dto: UpdateUserDto) {
     return this.usersService.update(id, dto);

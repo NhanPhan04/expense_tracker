@@ -25,7 +25,7 @@ export default function Users() {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const [page, setPage] = useState(1);
-  const perPage = 8;
+  const perPage = 10;
 
   // Modals
   const [showAddModal, setShowAddModal] = useState(false);
@@ -95,35 +95,33 @@ export default function Users() {
   };
 
   // --- CRUD Actions ---
-const addUser = async () => {
-  try {
-    if (!newUser.name || !newUser.email || !newUser.password) {
-      toast.error("Vui lòng điền đầy đủ thông tin!");
-      return;
-    }
+  const addUser = async () => {
+    try {
+      if (!newUser.name || !newUser.email || !newUser.password) {
+        toast.error("Vui lòng điền đầy đủ thông tin!");
+        return;
+      }
 
-    const res = await api.post("/admin/users", newUser);
-    toast.success("Thêm user thành công!");
-    fetchUsers(); // refresh danh sách
-    setShowAddModal(false);
-    setNewUser({ name: "", email: "", password: "", role: "user" });
+      const res = await api.post("/admin/users", newUser);
+      toast.success("Thêm user thành công!");
+      fetchUsers();
+      setShowAddModal(false);
+      setNewUser({ name: "", email: "", password: "", role: "user" });
 
-  } catch (err: any) {
-    if (err.response?.data) {
-      // Nếu backend trả về array errors
-      if (Array.isArray(err.response.data.errors)) {
-        err.response.data.errors.forEach((e: any) => toast.error(e.msg || e.message));
-      } else if (err.response.data.message) {
-        toast.error(err.response.data.message); // ví dụ: "Email đã tồn tại"
+    } catch (err: any) {
+      if (err.response?.data) {
+        if (Array.isArray(err.response.data.errors)) {
+          err.response.data.errors.forEach((e: any) => toast.error(e.msg || e.message));
+        } else if (err.response.data.message) {
+          toast.error(err.response.data.message); // ví dụ: "Email đã tồn tại"
+        } else {
+          toast.error("Thêm user thất bại");
+        }
       } else {
         toast.error("Thêm user thất bại");
       }
-    } else {
-      toast.error("Thêm user thất bại");
     }
-  }
-};
-
+  };
 
   const editUser = async () => {
     if (!showEditModal) return;
@@ -166,8 +164,15 @@ const addUser = async () => {
     const doc = new jsPDF();
     doc.text("User List", 14, 10);
     autoTable(doc, {
-      head: [["ID", "Name", "Email", "Role", "CreatedAt"]],
-      body: filtered.map(u => [u.id, u.name, u.email, u.role, new Date(u.createdAt).toLocaleDateString()])
+      head: [["ID", "Name", "Email", "Role", "CreatedAt", "Last Login"]],
+      body: filtered.map((u, index) => [
+        index + 1,
+        u.name,
+        u.email,
+        u.role,
+        new Date(u.createdAt).toLocaleDateString(),
+        u.lastLogin ? new Date(u.lastLogin).toLocaleString() : "-",
+      ])
     });
     doc.save("users.pdf");
     toast.success("Xuất PDF thành công!");
@@ -175,7 +180,15 @@ const addUser = async () => {
 
   // Export Excel
   const exportExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(filtered);
+    const worksheetData = filtered.map((u, index) => ({
+      ID: (page - 1) * perPage + index + 1,
+      Name: u.name,
+      Email: u.email,
+      Role: u.role,
+      CreatedAt: new Date(u.createdAt).toLocaleDateString(),
+      LastLogin: u.lastLogin ? new Date(u.lastLogin).toLocaleString() : "-",
+    }));
+    const worksheet = XLSX.utils.json_to_sheet(worksheetData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
     const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
@@ -196,10 +209,30 @@ const addUser = async () => {
       {/* Search & Add & Export */}
       <div className="flex items-center gap-2 mb-4">
         <FaSearch />
-        <input className="w-64 p-2 border rounded" placeholder="Tìm ID, tên, email..." value={search} onChange={(e)=>setSearch(e.target.value)}/>
-        <button className="flex items-center gap-2 px-3 py-2 ml-auto text-white bg-blue-500 rounded hover:bg-blue-600" onClick={()=>setShowAddModal(true)}><FaPlus /> Thêm User</button>
-        <button className="flex items-center gap-2 px-3 py-2 text-white bg-red-500 rounded hover:bg-red-600" onClick={exportPDF}><FaFilePdf /> PDF</button>
-        <button className="flex items-center gap-2 px-3 py-2 text-white bg-green-500 rounded hover:bg-green-600" onClick={exportExcel}><FaFileExcel /> Excel</button>
+        <input
+          className="w-64 p-2 border rounded"
+          placeholder="Tìm ID, tên, email..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <button
+          className="flex items-center gap-2 px-3 py-2 ml-auto text-white bg-blue-500 rounded hover:bg-blue-600"
+          onClick={() => setShowAddModal(true)}
+        >
+          <FaPlus /> Thêm User
+        </button>
+        <button
+          className="flex items-center gap-2 px-3 py-2 text-white bg-red-500 rounded hover:bg-red-600"
+          onClick={exportPDF}
+        >
+          <FaFilePdf /> PDF
+        </button>
+        <button
+          className="flex items-center gap-2 px-3 py-2 text-white bg-green-500 rounded hover:bg-green-600"
+          onClick={exportExcel}
+        >
+          <FaFileExcel /> Excel
+        </button>
       </div>
 
       {/* Table */}
@@ -207,19 +240,19 @@ const addUser = async () => {
         <table className="w-full border">
           <thead className="bg-gray-100">
             <tr>
-              <th className="p-2 border cursor-pointer" onClick={()=>handleSort("id")}>ID <FaSort className="inline" /></th>
-              <th className="p-2 border cursor-pointer" onClick={()=>handleSort("name")}>Name <FaSort className="inline" /></th>
-              <th className="p-2 border cursor-pointer" onClick={()=>handleSort("email")}>Email <FaSort className="inline" /></th>
-              <th className="p-2 border cursor-pointer" onClick={()=>handleSort("role")}>Role <FaSort className="inline" /></th>
+              <th className="p-2 border cursor-pointer" onClick={() => handleSort("id")}>ID <FaSort className="inline" /></th>
+              <th className="p-2 border cursor-pointer" onClick={() => handleSort("name")}>Name <FaSort className="inline" /></th>
+              <th className="p-2 border cursor-pointer" onClick={() => handleSort("email")}>Email <FaSort className="inline" /></th>
+              <th className="p-2 border cursor-pointer" onClick={() => handleSort("role")}>Role <FaSort className="inline" /></th>
               <th className="p-2 border">CreatedAt</th>
               <th className="p-2 border">Last Login</th>
               <th className="p-2 border">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {paginated.map(u => (
+            {paginated.map((u, index) => (
               <tr key={u.id} className="text-center">
-                <td className="p-2 border">{highlight(u.id)}</td>
+                <td className="p-2 border">{(page - 1) * perPage + index + 1}</td>
                 <td className="p-2 border">{highlight(u.name)}</td>
                 <td className="p-2 border">{highlight(u.email)}</td>
                 <td className="p-2 border"><span className={`px-2 py-1 rounded text-white ${u.role==="admin"?"bg-blue-500":"bg-gray-600"}`}>{u.role}</span></td>
@@ -239,13 +272,13 @@ const addUser = async () => {
       {/* Pagination */}
       <div className="flex justify-center gap-2 mt-4">
         <button disabled={page===1} onClick={()=>setPage(page-1)} className="px-3 py-1 border rounded">Prev</button>
-        {[...Array(totalPages)].map((_,i)=>(
+        {[...Array(totalPages)].map((_, i) => (
           <button key={i} onClick={()=>setPage(i+1)} className={`px-3 py-1 border rounded ${page===i+1?"bg-blue-500 text-white":""}`}>{i+1}</button>
         ))}
         <button disabled={page===totalPages} onClick={()=>setPage(page+1)} className="px-3 py-1 border rounded">Next</button>
       </div>
 
-      {/* --- Modals: Add / Edit / Reset / Delete --- */}
+      {/* --- Modals --- */}
       {showAddModal && (
         <Modal title="Thêm User" onClose={()=>setShowAddModal(false)}>
           <input placeholder="Name" className="w-full p-2 mb-2 border rounded" value={newUser.name} onChange={e=>setNewUser({...newUser,name:e.target.value})}/>
