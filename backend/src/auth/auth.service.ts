@@ -15,14 +15,12 @@ import * as nodemailer from 'nodemailer';
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User) private userRepo: Repository<User>,
+    @InjectRepository(User) 
+    private userRepo: Repository<User>,
     private jwtService: JwtService,
   ) {}
 
  async register(dto: RegisterDto): Promise<User> {
-  if (dto.password !== dto.confirmPassword) {
-    throw new BadRequestException('Confirm password không khớp');
-  }
 
   const exist = await this.userRepo.findOne({ where: { email: dto.email } });
   if (exist) throw new BadRequestException('Email đã tồn tại');
