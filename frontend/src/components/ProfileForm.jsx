@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { getProfile, updateProfile } from '../api/profileApi';
-import AvatarUpload from './AvatarUpload';
 
 export default function ProfileForm() {
   const [profile, setProfile] = useState({ name: '', email: '', avatar: '' });
@@ -31,9 +30,36 @@ export default function ProfileForm() {
     alert('Cập nhật thành công');
   };
 
+  // Lấy chữ cái đầu tên
+  const getInitial = () => profile.name?.[0]?.toUpperCase() || '?';
+
   return (
     <form onSubmit={handleSubmit} className="max-w-md p-4 mx-auto bg-white rounded shadow">
-      <AvatarUpload avatar={profile.avatar} onChange={handleAvatarChange} />
+      <div className="flex flex-col items-center">
+        {profile.avatar ? (
+          <img
+            src={profile.avatar}
+            alt="Avatar"
+            className="object-cover w-24 h-24 mb-2 rounded-full"
+          />
+        ) : (
+          <div className="flex items-center justify-center w-24 h-24 mb-2 text-2xl font-bold text-white bg-blue-500 rounded-full">
+            {getInitial()}
+          </div>
+        )}
+        <input
+          type="file"
+          onChange={(e) => {
+            if (e.target.files && e.target.files[0]) {
+              const reader = new FileReader();
+              reader.onload = () => handleAvatarChange(reader.result);
+              reader.readAsDataURL(e.target.files[0]);
+            }
+          }}
+          className="mb-4"
+        />
+      </div>
+
       <label className="block mt-4">
         Name:
         <input

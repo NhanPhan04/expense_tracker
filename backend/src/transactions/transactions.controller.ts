@@ -1,5 +1,5 @@
 // src/transaction/transaction.controller.ts
-import { Controller, Get, Post, Body, Param, Put, Delete, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, Query, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { TransactionService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
@@ -17,8 +17,9 @@ export class TransactionController {
     return this.transactionService.create(createDto, user);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: number, @GetUser() user: User) {
+ @Get(':id')
+findOne(@Param('id', ParseIntPipe) id: number, @GetUser() user: User)
+ {
     return this.transactionService.findOne(id, user);
   }
 

@@ -12,7 +12,10 @@ import UserLayout from "../layouts/UserLayout";
 import AdminLayout from "../layouts/AdminLayout";
 import AdminProfile from "../pages/profile/AdminProfile";
 import UserProfile from "../pages/profile/UserProfile";
-
+import ExpensePage from '../pages/Category/ExpensePage';
+import IncomePage from '../pages/Category/IncomePage';
+import TransactionsPage from "../pages/User/TransactionsPage";
+import CategoryPage from "../pages/admin/CategoryPage";
 const AppRoutes = () => {
   return (
     <Router>
@@ -26,19 +29,26 @@ const AppRoutes = () => {
         <Route path="/forget-password" element={<ForgetPasswordInline />} />
 
         {/* User routes */}
+        {/* User routes */}
         <Route
           element={
             <ProtectedRoute allowedRoles={["user"]}>
               <UserLayout>
-                <Outlet /> {/* cần Outlet để render nested route */}
+                <Outlet /> {/* Outlet để render nested route */}
               </UserLayout>
             </ProtectedRoute>
           }
         >
           <Route path="/user" element={<UserDashboard />} />
           <Route path="/user/profile" element={<UserProfile />} />
-          {/* Thêm các page user khác /transactions, /statistics,... */}
+          {/* Category pages */}
+          <Route path="/user/expense" element={<ExpensePage />} />
+          <Route path="/user/income" element={<IncomePage />} />
+          {/* Các page user khác như /transactions, /statistics có thể thêm sau */}
+          {/* **Báo cáo giao dịch** */}
+          <Route path="/user/transactions" element={<TransactionsPage />} />
         </Route>
+
 
         {/* Admin routes */}
         <Route
@@ -54,6 +64,7 @@ const AppRoutes = () => {
           <Route index element={<AdminDashboard />} /> {/* /admin */}
           <Route path="users" element={<Users />} />   {/* /admin/users */}
           <Route path="profile" element={<AdminProfile />} /> {/* /admin/profile */}
+           <Route path="categories" element={<CategoryPage />} />
           {/* Thêm các page admin khác /admin/statistics, /admin/settings */}
         </Route>
 
