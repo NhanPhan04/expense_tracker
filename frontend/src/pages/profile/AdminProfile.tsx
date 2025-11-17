@@ -76,70 +76,79 @@ useEffect(() => {
     }
   };
 
-  return (
-    <div className="max-w-md p-6 mx-auto mt-10 bg-white rounded-lg shadow-md">
-      <h2 className="mb-4 text-2xl font-semibold text-center">Admin Profile</h2>
+return (
+  <div className="max-w-md p-6 mx-auto mt-10 bg-white border-2 shadow-xl rounded-2xl border-purple-500/30">
+    <h2 className="mb-6 text-2xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-pink-500 to-indigo-500 drop-shadow-lg">
+      Thông Tin Admin
+    </h2>
 
-      <div className="flex justify-center mb-4">
-        <div className="flex items-center justify-center w-32 h-32 overflow-hidden bg-gray-200 rounded-full">
-          {preview ? (
-            <img
-              src={preview}
-              alt="preview avatar"
-              className="object-cover w-full h-full"
-            />
-          ) : admin.avatar ? (
-            <img
-              src={admin.avatar}
-              alt="avatar"
-              className="object-cover w-full h-full"
-            />
-          ) : (
-            <span className="text-gray-500">No Avatar</span>
-          )}
-        </div>
-      </div>
-
-      <div className="flex justify-center mb-4">
-        <input type="file" onChange={handleAvatarChange} />
-      </div>
-
-      <div className="mb-4">
-        <label className="block mb-1 font-medium">Name</label>
-        <input
-          type="text"
-          value={admin.name}
-          onChange={(e) => setAdmin({ ...admin, name: e.target.value })}
-          className="w-full px-3 py-2 border rounded"
+    {/* Avatar */}
+    <div className="flex justify-center mb-6">
+      <div className="relative w-32 h-32 overflow-hidden border-4 rounded-full shadow-lg border-gradient-to-r from-purple-500 to-pink-500">
+        <img
+          src={preview || admin.avatar || DEFAULT_AVATAR}
+          alt="avatar"
+          className="object-cover w-full h-full transition-all duration-300 hover:scale-105"
         />
+        <span className="absolute w-5 h-5 border-2 border-white rounded-full bottom-1 right-1 bg-gradient-to-r from-green-400 to-green-200 animate-pulse"></span>
       </div>
-
-      <div className="mb-4">
-        <label className="block mb-1 font-medium">Email</label>
-        <input
-          type="email"
-          value={admin.email}
-          onChange={(e) => setAdmin({ ...admin, email: e.target.value })}
-          className="w-full px-3 py-2 border rounded"
-        />
-      </div>
-
-      <div className="mb-4">
-        <label className="block mb-1 font-medium">Role</label>
-        <input
-          type="text"
-          value={admin.role}
-          readOnly
-          className="w-full px-3 py-2 bg-gray-100 border rounded"
-        />
-      </div>
-
-      <button
-        onClick={handleUpdate}
-        className="w-full py-2 text-white transition bg-blue-500 rounded hover:bg-blue-600"
-      >
-        Update Profile
-      </button>
     </div>
-  );
+
+    {/* Chọn avatar */}
+    <div className="flex justify-center mb-6">
+      <label className="px-4 py-2 text-white transition-all duration-300 rounded-lg cursor-pointer bg-gradient-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500">
+        Chọn Avatar
+        <input type="file" onChange={handleAvatarChange} className="hidden" />
+      </label>
+    </div>
+
+    {/* Name */}
+<div className="mb-4">
+  <label className="block mb-2 font-medium text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-pink-500 to-indigo-500">
+    Tên
+  </label>
+  <input
+    type="text"
+    value={admin.name}
+    onChange={(e) => setAdmin({ ...admin, name: e.target.value })}
+    className="w-full px-4 py-2 transition-all border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+  />
+</div>
+
+{/* Email */}
+<div className="mb-4">
+  <label className="block mb-2 font-medium text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-pink-500 to-indigo-500">
+    Email
+  </label>
+  <input
+    type="email"
+    value={admin.email}
+    onChange={(e) => setAdmin({ ...admin, email: e.target.value })}
+    className="w-full px-4 py-2 transition-all border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+  />
+</div>
+
+
+    {/* Role */}
+    <div className="mb-6">
+      <label className="block mb-2 font-medium text-gray-700">Role</label>
+      <input
+        type="text"
+        value={admin.role}
+        readOnly
+        className="w-full px-4 py-2 bg-gray-100 border rounded-lg cursor-not-allowed"
+      />
+    </div>
+
+    {/* Nút Update */}
+    <button
+      onClick={handleUpdate}
+      className="w-full py-2 font-semibold text-white transition-all duration-300 rounded-lg shadow-lg bg-gradient-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500"
+    >
+      Cập Nhật Thông Tin
+    </button>
+  </div>
+);
+
+
 }

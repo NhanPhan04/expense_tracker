@@ -84,7 +84,8 @@ export class TransactionService {
   async remove(id: number, user: User) {
     const transaction = await this.findOne(id, user);
     await this.transactionRepo.remove(transaction);
-    return { success: true };
+    return { success: true, id: transaction.id };
+
   }
 
   // Lấy summary theo tháng (tổng thu/chi)

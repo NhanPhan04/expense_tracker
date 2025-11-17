@@ -2,13 +2,13 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { forgetPassword, resetPassword } from "../../api/auth";
-
+import { useNavigate } from "react-router-dom";
 const ForgetPasswordInline = () => {
   const { register, handleSubmit, reset } = useForm();
   const [otpSent, setOtpSent] = useState(false);
   const [email, setEmail] = useState("");
   const [countdown, setCountdown] = useState(0);
-
+const navigate = useNavigate(); // <-- thêm navigate
   // Countdown gửi lại OTP
   useEffect(() => {
     let timer: number;
@@ -50,6 +50,7 @@ const ForgetPasswordInline = () => {
       alert("✅ Mật khẩu đã được cập nhật!");
       setOtpSent(false);
       reset();
+       navigate("/login"); // <-- chuyển hướng về login
     } catch (err: any) {
       alert(err.response?.data?.message || "❌ Cập nhật mật khẩu thất bại");
     }
